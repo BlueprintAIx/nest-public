@@ -55,7 +55,7 @@ done_ "Downloaded"
 pkill -x "Nest Watcher" 2>/dev/null && sleep 2 || true
 rm -rf "$app"
 ditto -xk "$download/app.zip" /Applications
-done_ "Installed in Applications"
+done_ "Installed version $(defaults read "$app/Contents/Info" CFBundleShortVersionString) in Applications"
 open "$app"
 done_ "Running: look for it in your menu bar"
 echo

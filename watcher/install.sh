@@ -1,8 +1,7 @@
 #!/bin/sh
 # Installs or updates Nest Watcher on a Mac, from the latest public release:
 #   curl -fsSL https://raw.githubusercontent.com/BlueprintAIx/nest-public/main/watcher/install.sh | OPENROUTER_API_KEY=sk-or-... sh
-# The key is asked for on the first install only. To remove: quit the app, then
-#   rm -rf "/Applications/Nest Watcher.app" ~/.nest/watcher
+# The key is needed on the first install only. uninstall.sh, beside this file, removes it.
 set -eu
 
 releases=https://github.com/BlueprintAIx/nest-public/releases/latest/download

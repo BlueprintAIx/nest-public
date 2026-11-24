@@ -25,8 +25,8 @@ bar() {
 }
 
 [ "$(uname -s)" = Darwin ] || fail "Nest Watcher runs on macOS only."
-# ponytail: Apple silicon only; an Intel build needs @parcel/watcher-darwin-x64 bundled
-[ "$(uname -m)" = arm64 ] || fail "This build is for Apple silicon Macs."
+# the chip, not uname -m, which says x86_64 in a terminal running under Rosetta
+[ "$(sysctl -n hw.optional.arm64 2>/dev/null)" = 1 ] && arch=arm64 || arch=x64
 
 printf '\n  \033[1mNest Watcher\033[0m\n\n'
 mkdir -p "$data"
@@ -39,9 +39,9 @@ fi
 
 download=$(mktemp -d)
 trap 'rm -rf "$download"' EXIT
-size=$(curl -fsSLI "$releases/nest-watcher-arm64.zip" | awk 'tolower($1) == "content-length:" { size = $2 } END { print size + 0 }')
+size=$(curl -fsSLI "$releases/nest-watcher-$arch.zip" | awk 'tolower($1) == "content-length:" { size = $2 } END { print size + 0 }')
 : > "$download/app.zip"
-curl -fsSL "$releases/nest-watcher-arm64.zip" -o "$download/app.zip" &
+curl -fsSL "$releases/nest-watcher-$arch.zip" -o "$download/app.zip" &
 fetch=$!
 # drawn only for a person at a terminal, and only when GitHub said how big the file is
 while [ -t 1 ] && [ "$size" -gt 0 ] && kill -0 $fetch 2>/dev/null; do

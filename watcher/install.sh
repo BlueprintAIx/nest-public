@@ -1,12 +1,11 @@
 #!/bin/sh
 # Installs or updates Nest Watcher on a Mac, from the latest public release:
-#   curl -fsSL https://raw.githubusercontent.com/BlueprintAIx/nest-public/main/watcher/install.sh | OPENROUTER_API_KEY=sk-or-... sh
-# The key is needed on the first install only. uninstall.sh, beside this file, removes it.
+#   curl -fsSL https://raw.githubusercontent.com/BlueprintAIx/nest-public/main/watcher/install.sh | sh
+# The app asks the user to sign in to Corefoil for the model's key. uninstall.sh, beside this file, removes it.
 set -eu
 
 releases=https://github.com/BlueprintAIx/nest-public/releases/latest/download
 app="/Applications/Nest Watcher.app"
-data="$HOME/.nest/watcher"
 
 fail() { printf '\n  %s\n\n' "$1" >&2; exit 1; }
 done_() { printf '  \033[38;5;69m✓\033[0m %s\n' "$1"; }
@@ -29,13 +28,6 @@ bar() {
 [ "$(sysctl -n hw.optional.arm64 2>/dev/null)" = 1 ] && arch=arm64 || arch=x64
 
 printf '\n  \033[1mNest Watcher\033[0m\n\n'
-mkdir -p "$data"
-if [ -n "${OPENROUTER_API_KEY:-}" ]; then
-    # readable by this user only
-    (umask 077; printf 'MAIN_VITE_OPENROUTER_API_KEY=%s\n' "$OPENROUTER_API_KEY" > "$data/.env")
-elif [ ! -f "$data/.env" ]; then
-    fail "Run it with the key you were given: ... | OPENROUTER_API_KEY=sk-or-... sh"
-fi
 
 download=$(mktemp -d)
 trap 'rm -rf "$download"' EXIT

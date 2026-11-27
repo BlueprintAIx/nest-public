@@ -1,11 +1,13 @@
 #!/bin/sh
-# Installs or updates Nest Watcher on a Mac, from the latest public release:
+# Installs or updates Corefoil on a Mac, from the latest public release:
 #   curl -fsSL https://raw.githubusercontent.com/BlueprintAIx/nest-public/main/watcher/install.sh | sh
 # The app asks the user to sign in to Corefoil for the model's key. uninstall.sh, beside this file, removes it.
 set -eu
 
 releases=https://github.com/BlueprintAIx/nest-public/releases/latest/download
-app="/Applications/Nest Watcher.app"
+app="/Applications/Corefoil.app"
+# the app was called Nest Watcher until 0.1.13; an update puts Corefoil in its place
+old="/Applications/Nest Watcher.app"
 
 fail() { printf '\n  %s\n\n' "$1" >&2; exit 1; }
 done_() { printf '  \033[38;5;69m✓\033[0m %s\n' "$1"; }
@@ -23,11 +25,11 @@ bar() {
     printf '\033[0m  %3d%%  %d of %d MB ' $(($1 * 100 / $2)) $(($1 / 1048576)) $(($2 / 1048576))
 }
 
-[ "$(uname -s)" = Darwin ] || fail "Nest Watcher runs on macOS only."
+[ "$(uname -s)" = Darwin ] || fail "Corefoil runs on macOS only."
 # the chip, not uname -m, which says x86_64 in a terminal running under Rosetta
 [ "$(sysctl -n hw.optional.arm64 2>/dev/null)" = 1 ] && arch=arm64 || arch=x64
 
-printf '\n  \033[1mNest Watcher\033[0m\n\n'
+printf '\n  \033[1mCorefoil\033[0m\n\n'
 
 download=$(mktemp -d)
 trap 'rm -rf "$download"' EXIT
@@ -44,8 +46,8 @@ wait $fetch || fail "The download failed. Check your connection and run the line
 [ -t 1 ] && printf '\r\033[K'
 done_ "Downloaded"
 
-pkill -x "Nest Watcher" 2>/dev/null && sleep 2 || true
-rm -rf "$app"
+pkill -x 'Corefoil|Nest Watcher' 2>/dev/null && sleep 2 || true
+rm -rf "$app" "$old"
 ditto -xk "$download/app.zip" /Applications
 done_ "Installed version $(defaults read "$app/Contents/Info" CFBundleShortVersionString) in Applications"
 open "$app"
